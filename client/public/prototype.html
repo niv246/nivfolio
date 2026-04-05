@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="he" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NivFolio — Portfolio Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ═══════ THEME VARIABLES ═══════ */
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;--bg4:#0f172a;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.03);
+  --hover:rgba(255,255,255,0.03);
+  --indigo:#6366f1;--indigo2:#818cf8;--indigo-bg:rgba(99,102,241,0.15);
+  --cyan:#06b6d4;
+  --green:#10b981;--green2:#34d399;--green-bg:rgba(16,185,129,0.15);
+  --red:#ef4444;--red2:#f87171;--red-bg:rgba(239,68,68,0.15);
+  --amber:#f59e0b;--amber2:#fbbf24;--amber-bg:rgba(245,158,11,0.06);--amber-border:rgba(245,158,11,0.2);
+  --purple:#8b5cf6;--orange:#f97316;
+  --card-shadow:none;
+  --modal-bg:rgba(0,0,0,0.6);
+  --modal-border:rgba(255,255,255,0.1);
+  --input-bg:#0a0e1a;
+  --chip-bg:rgba(255,255,255,0.05);
+  --tag-bg:rgba(255,255,255,0.05);
+  --ticker-bg:rgba(99,102,241,0.1);
+  --ticker-color:var(--indigo2);
+  --weight-track:rgba(255,255,255,0.05);
+  --gradient-indigo:linear-gradient(135deg,rgba(99,102,241,0.18),rgba(99,102,241,0.04));
+  --gradient-green:linear-gradient(135deg,rgba(16,185,129,0.18),rgba(16,185,129,0.04));
+  --gradient-red:linear-gradient(135deg,rgba(239,68,68,0.18),rgba(239,68,68,0.04));
+  --gradient-gray:linear-gradient(135deg,rgba(100,116,139,0.14),rgba(100,116,139,0.04));
+  --chart-fill:rgba(99,102,241,0.15);
+  --chart-line-clip:polygon(0% 60%,10% 55%,20% 70%,30% 40%,40% 45%,50% 30%,60% 35%,70% 20%,80% 25%,90% 15%,100% 10%,100% 100%,0% 100%);
+  --toggle-track:#1e293b;--toggle-knob:#818cf8;--toggle-icon-sun:0;--toggle-icon-moon:1;
+  --nav-blur:rgba(10,14,26,0.92);
+  --font:'DM Sans',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+}
+
+[data-theme="light"]{
+  --bg:#f8f9fb;--bg2:#ffffff;--bg3:#f1f3f5;--bg4:#e9ecef;
+  --text:#1a1a2e;--text2:#6b7280;--text3:#9ca3af;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.04);
+  --hover:rgba(0,0,0,0.03);
+  --indigo:#4f46e5;--indigo2:#6366f1;--indigo-bg:rgba(79,70,229,0.08);
+  --green:#059669;--green2:#10b981;--green-bg:rgba(5,150,105,0.08);
+  --red:#dc2626;--red2:#ef4444;--red-bg:rgba(220,38,38,0.08);
+  --amber:#d97706;--amber2:#f59e0b;--amber-bg:rgba(217,119,6,0.05);--amber-border:rgba(217,119,6,0.15);
+  --card-shadow:0 1px 3px rgba(0,0,0,0.06);
+  --modal-bg:rgba(0,0,0,0.3);
+  --modal-border:rgba(0,0,0,0.1);
+  --input-bg:#f1f3f5;
+  --chip-bg:rgba(0,0,0,0.04);
+  --tag-bg:rgba(0,0,0,0.05);
+  --ticker-bg:rgba(79,70,229,0.08);
+  --ticker-color:var(--indigo);
+  --weight-track:rgba(0,0,0,0.06);
+  --gradient-indigo:linear-gradient(135deg,rgba(79,70,229,0.06),rgba(79,70,229,0.01));
+  --gradient-green:linear-gradient(135deg,rgba(5,150,105,0.06),rgba(5,150,105,0.01));
+  --gradient-red:linear-gradient(135deg,rgba(220,38,38,0.06),rgba(220,38,38,0.01));
+  --gradient-gray:linear-gradient(135deg,rgba(107,114,128,0.06),rgba(107,114,128,0.01));
+  --chart-fill:rgba(79,70,229,0.08);
+  --toggle-track:#e2e8f0;--toggle-knob:#f59e0b;--toggle-icon-sun:1;--toggle-icon-moon:0;
+  --nav-blur:rgba(248,249,251,0.92);
+}
+
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden;transition:background 0.4s,color 0.3s}
+
+/* ─── NAV ─── */
+.nav{position:sticky;top:0;z-index:50;background:var(--nav-blur);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;transition:background 0.4s}
+.nav-left{display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:-0.02em}
+.logo-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--indigo),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
+.nav-tabs{display:flex;gap:2px;margin-left:16px}
+.nav-tab{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;transition:all 0.2s;border:none;background:none;font-family:var(--font)}
+.nav-tab:hover{color:var(--text2);background:var(--hover)}
+.nav-tab.active{color:var(--text);background:var(--chip-bg);font-weight:600}
+.nav-right{display:flex;align-items:center;gap:6px}
+.cash-badge{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;transition:all 0.2s;border:none;background:none;font-family:var(--font)}
+.cash-badge:hover{background:var(--hover)}
+.cash-badge span{font-family:var(--mono);font-weight:600;color:var(--text)}
+.btn-ghost{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;transition:all 0.2s;border:none;background:none;font-family:var(--font)}
+.btn-ghost:hover{color:var(--text2);background:var(--hover)}
+.btn-primary{padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;color:#fff;background:var(--indigo);cursor:pointer;transition:all 0.2s;border:none;font-family:var(--font);display:flex;align-items:center;gap:4px}
+.btn-primary:hover{filter:brightness(1.15)}
+.divider{width:1px;height:16px;background:var(--border)}
+
+/* ─── THEME TOGGLE ─── */
+.theme-toggle{width:44px;height:24px;border-radius:99px;background:var(--toggle-track);border:none;cursor:pointer;position:relative;transition:background 0.3s;padding:0;flex-shrink:0}
+.theme-toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--toggle-knob);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),background 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+[data-theme="light"] .theme-toggle::after{transform:translateX(20px)}
+.theme-toggle .icon-sun,.theme-toggle .icon-moon{position:absolute;top:50%;transform:translateY(-50%);font-size:11px;line-height:1;transition:opacity 0.3s}
+.theme-toggle .icon-sun{right:5px;opacity:var(--toggle-icon-sun)}
+.theme-toggle .icon-moon{left:5px;opacity:var(--toggle-icon-moon)}
+
+/* ─── MAIN ─── */
+.main{max-width:1200px;margin:0 auto;padding:32px 24px}
+.page-title{font-size:28px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text2);margin-bottom:32px}
+.section-title{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:16px;display:flex;align-items:center;gap:6px}
+.section-title .count{font-weight:400;color:var(--text3);font-size:12px}
+
+/* ─── CARDS ─── */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.card{border-radius:16px;padding:16px 20px;border:1px solid var(--border);box-shadow:var(--card-shadow);transition:background 0.3s,border 0.3s,box-shadow 0.3s}
+.card-label{font-size:11px;font-weight:500;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card-value{font-size:22px;font-weight:700;font-family:var(--mono);letter-spacing:-0.02em}
+.card-green{background:var(--gradient-green)}
+.card-red{background:var(--gradient-red)}
+.card-indigo{background:var(--gradient-indigo)}
+.card-default{background:var(--gradient-gray)}
+.pnl{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;font-family:var(--mono);margin-top:4px}
+.pnl-up{background:var(--green-bg);color:var(--green2)}
+.pnl-down{background:var(--red-bg);color:var(--red2)}
+
+/* ─── ALERT ─── */
+.alert{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:16px;padding:14px 18px;margin-bottom:24px;transition:background 0.3s}
+.alert-title{font-size:12px;font-weight:700;color:var(--amber);margin-bottom:8px}
+.alert-tags{display:flex;gap:8px;flex-wrap:wrap}
+.alert-tag{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:99px;background:var(--bg2);font-size:12px;font-family:var(--mono);font-weight:600;border:1px solid var(--border);box-shadow:var(--card-shadow)}
+
+/* ─── PANELS ─── */
+.panels{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:24px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--card-shadow);transition:background 0.3s}
+.panel-title{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:16px}
+
+/* ─── PIE ─── */
+.pie-wrap{display:flex;flex-direction:column;align-items:center}
+.pie-svg{width:180px;height:180px;margin-bottom:16px}
+.pie-svg circle{transition:stroke 0.3s}
+.legend{width:100%;display:flex;flex-direction:column;gap:6px}
+.legend-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.legend-name{flex:1}
+.legend-pct{color:var(--text3);font-family:var(--mono);font-size:11px;width:36px;text-align:right}
+.legend-bar{width:56px;height:5px;border-radius:99px;background:var(--weight-track);overflow:hidden}
+.legend-bar-fill{height:100%;border-radius:99px}
+
+/* ─── CHART ─── */
+.chart-area{height:200px;position:relative;display:flex;align-items:flex-end;border-bottom:1px solid var(--border2);padding-bottom:8px}
+.chart-placeholder{width:100%;height:100%;background:linear-gradient(180deg,var(--chart-fill),transparent);border-radius:8px;position:relative;overflow:hidden}
+.chart-line{position:absolute;bottom:0;left:0;width:100%;height:70%;border-top:2px solid var(--indigo);background:linear-gradient(180deg,var(--chart-fill),transparent);border-radius:0 0 8px 8px;clip-path:var(--chart-line-clip)}
+.chart-labels{display:flex;justify-content:space-between;padding-top:6px;font-size:10px;color:var(--text3);font-family:var(--mono)}
+
+/* ─── TABLE ─── */
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--card-shadow);transition:background 0.3s}
+.table-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.table-header-title{font-size:12px;font-weight:700;color:var(--text2)}
+.table-header-sub{font-size:10px;color:var(--text3);font-family:var(--mono)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 16px;font-size:11px;font-weight:500;color:var(--text3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:0.04em}
+td{padding:12px 16px;font-size:12px;border-bottom:1px solid var(--border2)}
+tr:last-child td{border-bottom:none}
+tr:hover{background:var(--hover)}
+.ticker-badge{display:inline-flex;align-items:center;gap:6px}
+.ticker-icon{width:26px;height:26px;border-radius:8px;background:var(--ticker-bg);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:var(--ticker-color);font-family:var(--mono)}
+.ticker-name{font-weight:700;font-family:var(--mono)}
+.ticker-sector{font-size:10px;color:var(--text3)}
+.mono{font-family:var(--mono)}
+.green{color:var(--green2)}
+.red{color:var(--red2)}
+.tag{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.tag-buy{background:var(--green-bg);color:var(--green2)}
+.tag-sell{background:var(--red-bg);color:var(--red2)}
+.tag-deposit{background:var(--green-bg);color:var(--green2)}
+.tag-withdraw{background:rgba(245,158,11,0.15);color:var(--amber)}
+.tag-month{background:var(--indigo-bg);color:var(--indigo2)}
+.ticker-tag{font-weight:700;font-family:var(--mono);background:var(--tag-bg);padding:2px 8px;border-radius:4px;color:var(--text2);font-size:10px;margin-right:4px;display:inline-block}
+.weight-bar{display:flex;align-items:center;gap:6px}
+.weight-pct{font-family:var(--mono);font-size:10px;color:var(--text3);width:32px;text-align:right}
+.weight-track{width:48px;height:5px;border-radius:99px;background:var(--weight-track);overflow:hidden}
+.weight-fill{height:100%;border-radius:99px;background:var(--indigo)}
+.del-btn{color:var(--text3);cursor:pointer;opacity:0;transition:opacity 0.2s}
+tr:hover .del-btn{opacity:1}
+.del-btn:hover{color:var(--red)}
+
+/* ─── BAR CHART ─── */
+.bar-chart{display:flex;align-items:flex-end;justify-content:space-around;height:180px;padding:0 16px 8px;border-bottom:1px solid var(--border2);gap:8px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar{width:100%;max-width:60px;border-radius:6px 6px 0 0;transition:height 0.6s cubic-bezier(0.22,1,0.36,1);min-height:4px}
+.bar-label{font-size:9px;color:var(--text3);font-family:var(--mono);white-space:nowrap;text-align:center}
+.bar-val{font-size:10px;font-weight:700;font-family:var(--mono)}
+
+/* ─── SETTINGS ─── */
+.settings-table{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--card-shadow);transition:background 0.3s}
+.settings-row{display:flex;align-items:flex-start;padding:14px 20px;border-bottom:1px solid var(--border2);transition:background 0.2s}
+.settings-row:hover{background:var(--hover)}
+.settings-row:last-child{border-bottom:none}
+.settings-label{width:200px;flex-shrink:0;font-size:13px;color:var(--text2);font-weight:500}
+.settings-value{flex:1}
+.input{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:var(--mono);font-size:13px;width:280px;outline:none;transition:border-color 0.2s,background 0.3s}
+.input:focus{border-color:var(--indigo)}
+.toggle-group{display:flex;gap:8px}
+.toggle-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s;font-family:var(--font)}
+.toggle-active{background:var(--indigo);color:#fff}
+.toggle-inactive{background:var(--chip-bg);color:var(--text3)}
+.toggle-inactive:hover{background:var(--hover)}
+.link{color:var(--indigo2);font-size:11px;text-decoration:none;margin-top:4px;display:inline-block}
+.link:hover{text-decoration:underline}
+
+/* ─── TOTALS ─── */
+.totals{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:24px;box-shadow:var(--card-shadow);transition:background 0.3s}
+.totals-header{padding:10px 20px;background:var(--hover);border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text2)}
+.totals-row{display:flex;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border2)}
+.totals-row:last-child{border:none}
+.totals-label{width:200px;font-size:13px;color:var(--text3)}
+.totals-value{font-size:13px;font-family:var(--mono);font-weight:600}
+
+/* ─── MODAL ─── */
+.modal-overlay{position:fixed;inset:0;background:var(--modal-bg);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--modal-border);border-radius:16px;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,0.4);transition:background 0.3s}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-header h3{font-size:14px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px;transition:color 0.2s}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:20px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:11px;color:var(--text3);margin-bottom:6px;display:block}
+.form-input{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:var(--mono);font-size:13px;font-weight:600;outline:none;transition:border-color 0.2s,background 0.3s}
+.form-input:focus{border-color:var(--indigo)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sector-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:4px 10px;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;font-family:var(--font)}
+.chip-active{background:var(--indigo);color:#fff}
+.chip-inactive{background:var(--chip-bg);color:var(--text3)}
+.total-preview{background:var(--indigo-bg);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:12px;text-align:center;margin-bottom:16px}
+.total-label{font-size:10px;color:var(--indigo2);margin-bottom:2px}
+.total-value{font-size:20px;font-weight:700;font-family:var(--mono);color:var(--indigo2)}
+.total-remaining{font-size:10px;color:var(--text3);margin-top:2px}
+.btn-full{width:100%;padding:12px;border-radius:12px;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:var(--font);transition:filter 0.2s}
+.btn-full:hover{filter:brightness(1.15)}
+.btn-buy{background:var(--green);color:#fff}
+.btn-blue{background:var(--indigo);color:#fff}
+
+/* ─── CASH MODAL ─── */
+.cash-balance{background:var(--input-bg);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;border:1px solid var(--border);transition:background 0.3s}
+.cash-bal-label{font-size:10px;color:var(--text3);margin-bottom:4px}
+.cash-bal-value{font-size:28px;font-weight:700;font-family:var(--mono)}
+.cash-activity{border-top:1px solid var(--border2);padding-top:12px;margin-top:16px}
+.cash-activity-title{font-size:11px;color:var(--text3);margin-bottom:8px}
+.cash-row{display:flex;align-items:center;gap:8px;font-size:11px;padding:4px 0}
+.cash-row-date{color:var(--text3);font-family:var(--mono);width:72px;flex-shrink:0}
+.cash-row-amount{font-family:var(--mono);font-weight:600;flex:1}
+.cash-row-ticker{background:var(--tag-bg);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:10px}
+
+/* ─── FOOTER ─── */
+.footer{text-align:center;padding:24px;font-size:10px;color:var(--text3);font-family:var(--mono)}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page{animation:fadeIn 0.3s ease}
+
+@media(max-width:900px){.cards{grid-template-columns:1fr 1fr}.panels{grid-template-columns:1fr}}
+@media(max-width:600px){.cards{grid-template-columns:1fr}.nav-tabs{display:none}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-left">
+    <div class="logo"><div class="logo-icon">N</div>NivFolio</div>
+    <div class="nav-tabs" id="tabsContainer">
+      <button class="nav-tab active" data-page="dashboard">📊 Dashboard</button>
+      <button class="nav-tab" data-page="monthly">📅 Monthly</button>
+      <button class="nav-tab" data-page="history">📋 Transactions</button>
+      <button class="nav-tab" data-page="settings">⚙️ Settings</button>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="cash-badge" onclick="toggleModal('cashModal')">💵 <span>$12,450.00</span></button>
+    <div class="divider"></div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+    </button>
+    <div class="divider"></div>
+    <button class="btn-ghost">↻ Refresh</button>
+    <button class="btn-primary" onclick="toggleModal('txModal')">+ עסקה</button>
+  </div>
+</nav>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="page-dashboard" class="main page">
+  <h1 class="page-title">Portfolio Dashboard</h1>
+  <p class="page-sub">Track your investments and performance in one place.</p>
+  <div class="cards">
+    <div class="card card-indigo"><div class="card-label">💰 Total Portfolio</div><div class="card-value">$47,892</div></div>
+    <div class="card card-default"><div class="card-label">💵 Cash Available</div><div class="card-value">$12,450</div><div class="pnl" style="background:rgba(245,158,11,0.15);color:var(--amber2)">26.0% cash</div></div>
+    <div class="card card-green"><div class="card-label">📈 Overall P&L</div><div class="card-value green">$7,892</div><div class="pnl pnl-up">▲ +19.73%</div></div>
+    <div class="card card-green"><div class="card-label">🕐 Daily Change</div><div class="card-value green">$234</div><div class="pnl pnl-up">▲ +0.49%</div></div>
+  </div>
+  <div class="alert">
+    <div class="alert-title">⚠️ התראות — שינויים חדים היום</div>
+    <div class="alert-tags">
+      <span class="alert-tag"><span class="green">TSLA</span>&nbsp;<span class="pnl pnl-up" style="margin:0">▲ +5.23%</span></span>
+      <span class="alert-tag"><span class="red">NVDA</span>&nbsp;<span class="pnl pnl-down" style="margin:0">▼ -4.12%</span></span>
+    </div>
+  </div>
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-title">🥧 Allocation</div>
+      <div class="pie-wrap">
+        <svg class="pie-svg" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="38" fill="none" stroke="var(--bg3)" stroke-width="16"/>
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#6366f1" stroke-width="16" stroke-dasharray="85 154" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#cb7b3c" stroke-width="16" stroke-dasharray="40 199" stroke-dashoffset="-85" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#9b7fc4" stroke-width="16" stroke-dasharray="28 211" stroke-dashoffset="-125" transform="rotate(-90 50 50)"/>
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#f0c040" stroke-width="16" stroke-dasharray="46 193" stroke-dashoffset="-153" transform="rotate(-90 50 50)"/>
+        </svg>
+        <div class="legend">
+          <div class="legend-row"><div class="legend-dot" style="background:#6366f1"></div><span class="legend-name">💻 Technology</span><span class="legend-pct">35.6%</span><div class="legend-bar"><div class="legend-bar-fill" style="width:35.6%;background:#6366f1"></div></div></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#cb7b3c"></div><span class="legend-name">🏥 Healthcare</span><span class="legend-pct">16.8%</span><div class="legend-bar"><div class="legend-bar-fill" style="width:16.8%;background:#cb7b3c"></div></div></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#9b7fc4"></div><span class="legend-name">🏦 Finance</span><span class="legend-pct">11.6%</span><div class="legend-bar"><div class="legend-bar-fill" style="width:11.6%;background:#9b7fc4"></div></div></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#f0c040"></div><span class="legend-name">💵 Cash</span><span class="legend-pct">26.0%</span><div class="legend-bar"><div class="legend-bar-fill" style="width:26%;background:#f0c040"></div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">📈 Performance</div>
+      <div class="chart-area"><div class="chart-placeholder"><div class="chart-line"></div></div></div>
+      <div class="chart-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span></div>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <div class="table-header"><span class="table-header-title">📁 Holdings (5)</span><span class="table-header-sub">Prices delayed 15 min • FinnHub</span></div>
+    <table><thead><tr><th>Ticker</th><th>Shares</th><th>Avg Cost</th><th>Price</th><th>Value</th><th>P&L</th><th>Weight</th><th>Daily</th></tr></thead>
+    <tbody>
+      <tr><td><div class="ticker-badge"><div class="ticker-icon">AA</div><div><div class="ticker-name">AAPL</div><div class="ticker-sector">Technology</div></div></div></td><td class="mono">150</td><td class="mono" style="color:var(--text2)">$142.30</td><td class="mono" style="font-weight:600">$178.50</td><td class="mono" style="font-weight:600">$26,775</td><td><div class="mono green" style="font-weight:700">$5,430</div><div class="pnl pnl-up">▲ +25.39%</div></td><td><div class="weight-bar"><span class="weight-pct">55.9%</span><div class="weight-track"><div class="weight-fill" style="width:55.9%"></div></div></div></td><td><span class="pnl pnl-up">▲ +1.23%</span></td></tr>
+      <tr><td><div class="ticker-badge"><div class="ticker-icon" style="background:rgba(203,123,60,0.15);color:#cb7b3c">JN</div><div><div class="ticker-name">JNJ</div><div class="ticker-sector">Healthcare</div></div></div></td><td class="mono">80</td><td class="mono" style="color:var(--text2)">$155.00</td><td class="mono" style="font-weight:600">$162.40</td><td class="mono" style="font-weight:600">$12,992</td><td><div class="mono green" style="font-weight:700">$592</div><div class="pnl pnl-up">▲ +4.77%</div></td><td><div class="weight-bar"><span class="weight-pct">27.1%</span><div class="weight-track"><div class="weight-fill" style="width:27.1%"></div></div></div></td><td><span class="pnl pnl-down">▼ -0.45%</span></td></tr>
+      <tr><td><div class="ticker-badge"><div class="ticker-icon" style="background:rgba(155,127,196,0.15);color:#9b7fc4">JP</div><div><div class="ticker-name">JPM</div><div class="ticker-sector">Finance</div></div></div></td><td class="mono">45</td><td class="mono" style="color:var(--text2)">$140.00</td><td class="mono" style="font-weight:600">$175.80</td><td class="mono" style="font-weight:600">$7,911</td><td><div class="mono green" style="font-weight:700">$1,611</div><div class="pnl pnl-up">▲ +25.57%</div></td><td><div class="weight-bar"><span class="weight-pct">16.5%</span><div class="weight-track"><div class="weight-fill" style="width:16.5%"></div></div></div></td><td><span class="pnl pnl-up">▲ +0.89%</span></td></tr>
+      <tr><td><div class="ticker-badge"><div class="ticker-icon">TS</div><div><div class="ticker-name">TSLA</div><div class="ticker-sector">Technology</div></div></div></td><td class="mono">20</td><td class="mono" style="color:var(--text2)">$245.00</td><td class="mono" style="font-weight:600">$268.90</td><td class="mono" style="font-weight:600">$5,378</td><td><div class="mono green" style="font-weight:700">$478</div><div class="pnl pnl-up">▲ +9.76%</div></td><td><div class="weight-bar"><span class="weight-pct">11.2%</span><div class="weight-track"><div class="weight-fill" style="width:11.2%"></div></div></div></td><td><span class="pnl pnl-up">▲ +5.23%</span></td></tr>
+      <tr><td><div class="ticker-badge"><div class="ticker-icon">NV</div><div><div class="ticker-name">NVDA</div><div class="ticker-sector">Technology</div></div></div></td><td class="mono">30</td><td class="mono" style="color:var(--text2)">$480.00</td><td class="mono" style="font-weight:600">$462.20</td><td class="mono" style="font-weight:600">$13,866</td><td><div class="mono red" style="font-weight:700">-$534</div><div class="pnl pnl-down">▼ -3.71%</div></td><td><div class="weight-bar"><span class="weight-pct">28.9%</span><div class="weight-track"><div class="weight-fill" style="width:28.9%"></div></div></div></td><td><span class="pnl pnl-down">▼ -4.12%</span></td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<!-- ═══ MONTHLY ═══ -->
+<div id="page-monthly" class="main page" style="display:none">
+  <h1 class="page-title">Monthly Summary</h1>
+  <p class="page-sub">סיכום ביצועים חודשי — קניות, מכירות ורווח ממומש.</p>
+  <div class="section-title">📊 Realized P&L by Month</div>
+  <div class="panel" style="margin-bottom:24px">
+    <div class="bar-chart">
+      <div class="bar-col"><div class="bar-val green">$1.2k</div><div class="bar" style="height:52%;background:var(--green)"></div><div class="bar-label">ינואר</div></div>
+      <div class="bar-col"><div class="bar-val red">-$450</div><div class="bar" style="height:20%;background:var(--red)"></div><div class="bar-label">פברואר</div></div>
+      <div class="bar-col"><div class="bar-val green">$2.8k</div><div class="bar" style="height:95%;background:var(--green)"></div><div class="bar-label">מרץ</div></div>
+      <div class="bar-col"><div class="bar-val green">$890</div><div class="bar" style="height:38%;background:var(--green)"></div><div class="bar-label">אפריל</div></div>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table><thead><tr><th>חודש</th><th>קניות</th><th>מכירות</th><th># עסקאות</th><th>רווח ממומש</th><th>מניות</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pnl tag-month">אפריל 2026</span></td><td class="mono green">$8,200</td><td class="mono red">$3,400</td><td class="mono">5B / 2S</td><td class="mono green" style="font-weight:700">$890.00</td><td><span class="ticker-tag">AAPL</span><span class="ticker-tag">TSLA</span></td></tr>
+      <tr><td><span class="pnl tag-month">מרץ 2026</span></td><td class="mono green">$12,500</td><td class="mono red">$6,800</td><td class="mono">8B / 3S</td><td class="mono green" style="font-weight:700">$2,800.00</td><td><span class="ticker-tag">AAPL</span><span class="ticker-tag">JNJ</span><span class="ticker-tag">NVDA</span></td></tr>
+      <tr><td><span class="pnl tag-month">פברואר 2026</span></td><td class="mono green">$4,000</td><td class="mono red">$2,100</td><td class="mono">3B / 1S</td><td class="mono red" style="font-weight:700">-$450.00</td><td><span class="ticker-tag">JPM</span></td></tr>
+      <tr><td><span class="pnl tag-month">ינואר 2026</span></td><td class="mono green">$15,300</td><td class="mono red">$4,200</td><td class="mono">10B / 2S</td><td class="mono green" style="font-weight:700">$1,200.00</td><td><span class="ticker-tag">AAPL</span><span class="ticker-tag">JNJ</span><span class="ticker-tag">JPM</span><span class="ticker-tag">NVDA</span></td></tr>
+    </tbody></table>
+  </div>
+  <div class="totals">
+    <div class="totals-header">📊 Totals</div>
+    <div class="totals-row"><span class="totals-label">סה״כ קניות</span><span class="totals-value green">$40,000.00</span></div>
+    <div class="totals-row"><span class="totals-label">סה״כ מכירות</span><span class="totals-value red">$16,500.00</span></div>
+    <div class="totals-row"><span class="totals-label">סה״כ רווח ממומש</span><span class="totals-value green">$4,440.00</span></div>
+    <div class="totals-row"><span class="totals-label"># עסקאות</span><span class="totals-value">34</span></div>
+  </div>
+</div>
+
+<!-- ═══ TRANSACTIONS ═══ -->
+<div id="page-history" class="main page" style="display:none">
+  <h1 class="page-title">Transactions</h1>
+  <p class="page-sub">Full history of all buys, sells and cash operations.</p>
+  <div class="section-title">💵 Cash Operations</div>
+  <div class="table-wrap" style="margin-bottom:24px">
+    <table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td class="mono" style="color:var(--text2)">2026-04-01</td><td><span class="tag tag-deposit">הפקדה</span></td><td class="mono" style="font-weight:600">$20,000.00</td><td style="color:var(--text2)">הפקדה</td></tr>
+      <tr><td class="mono" style="color:var(--text2)">2026-03-15</td><td><span class="tag tag-deposit">הפקדה</span></td><td class="mono" style="font-weight:600">$15,000.00</td><td style="color:var(--text2)">הפקדה</td></tr>
+      <tr><td class="mono" style="color:var(--text2)">2026-02-01</td><td><span class="tag tag-withdraw">משיכה</span></td><td class="mono" style="font-weight:600">$5,000.00</td><td style="color:var(--text2)">משיכה</td></tr>
+    </tbody></table>
+  </div>
+  <div class="section-title">📋 Stock Transactions</div>
+  <div class="table-wrap">
+    <table><thead><tr><th>Date</th><th>Type</th><th>Ticker</th><th>Qty</th><th>Price</th><th>Total</th><th>Sector</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="mono" style="color:var(--text2)">2026-04-03</td><td><span class="tag tag-buy">Buy</span></td><td><span class="ticker-tag" style="font-size:12px">TSLA</span></td><td class="mono">20</td><td class="mono">$245.00</td><td class="mono" style="font-weight:600">$4,900.00</td><td style="color:var(--text2)">💻 Technology</td><td><span class="del-btn">✕</span></td></tr>
+      <tr><td class="mono" style="color:var(--text2)">2026-04-02</td><td><span class="tag tag-sell">Sell</span></td><td><span class="ticker-tag" style="font-size:12px">JNJ</span></td><td class="mono">10</td><td class="mono">$165.00</td><td class="mono" style="font-weight:600">$1,650.00</td><td style="color:var(--text2)">🏥 Healthcare</td><td><span class="del-btn">✕</span></td></tr>
+      <tr><td class="mono" style="color:var(--text2)">2026-03-28</td><td><span class="tag tag-buy">Buy</span></td><td><span class="ticker-tag" style="font-size:12px">NVDA</span></td><td class="mono">30</td><td class="mono">$480.00</td><td class="mono" style="font-weight:600">$14,400.00</td><td style="color:var(--text2)">💻 Technology</td><td><span class="del-btn">✕</span></td></tr>
+      <tr><td class="mono" style="color:var(--text2)">2026-03-20</td><td><span class="tag tag-buy">Buy</span></td><td><span class="ticker-tag" style="font-size:12px">AAPL</span></td><td class="mono">50</td><td class="mono">$142.30</td><td class="mono" style="font-weight:600">$7,115.00</td><td style="color:var(--text2)">💻 Technology</td><td><span class="del-btn">✕</span></td></tr>
+      <tr><td class="mono" style="color:var(--text2)">2026-03-15</td><td><span class="tag tag-sell">Sell</span></td><td><span class="ticker-tag" style="font-size:12px">AAPL</span></td><td class="mono">20</td><td class="mono">$155.00</td><td class="mono" style="font-weight:600">$3,100.00</td><td style="color:var(--text2)">💻 Technology</td><td><span class="del-btn">✕</span></td></tr>
+      <tr><td class="mono" style="color:var(--text2)">2026-02-10</td><td><span class="tag tag-buy">Buy</span></td><td><span class="ticker-tag" style="font-size:12px">JPM</span></td><td class="mono">45</td><td class="mono">$140.00</td><td class="mono" style="font-weight:600">$6,300.00</td><td style="color:var(--text2)">🏦 Finance</td><td><span class="del-btn">✕</span></td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div id="page-settings" class="main page" style="display:none">
+  <h1 class="page-title">Settings</h1>
+  <p class="page-sub">API key, currency, and exchange rate.</p>
+  <div class="settings-table">
+    <div class="settings-row"><div class="settings-label">🔑 FinnHub API Key</div><div class="settings-value"><input class="input" type="text" placeholder="pk_xxxxxxxx" value="d22v7ipr01q...n80"><br><a class="link" href="https://finnhub.io/register" target="_blank">Get a free key →</a></div></div>
+    <div class="settings-row"><div class="settings-label">💱 Display Currency</div><div class="settings-value"><div class="toggle-group"><button class="toggle-btn toggle-active">$ Dollar</button><button class="toggle-btn toggle-inactive">₪ Shekel</button></div></div></div>
+    <div class="settings-row"><div class="settings-label">📊 USD/ILS Rate</div><div class="settings-value"><input class="input" type="text" value="3.6000" style="width:120px"></div></div>
+  </div>
+</div>
+
+<!-- ═══ TX MODAL ═══ -->
+<div id="txModal" class="modal-overlay" onclick="if(event.target===this)toggleModal('txModal')">
+  <div class="modal">
+    <div class="modal-header"><h3>עסקה חדשה</h3><div style="display:flex;align-items:center;gap:12px"><span style="font-size:11px;color:var(--text3)">💵 <span class="mono" style="color:var(--text)">$12,450.00</span></span><button class="modal-close" onclick="toggleModal('txModal')">✕</button></div></div>
+    <div class="modal-body">
+      <div class="toggle-group" style="margin-bottom:16px"><button class="toggle-btn" style="flex:1;background:var(--green-bg);color:var(--green2)">🟢 קנייה</button><button class="toggle-btn toggle-inactive" style="flex:1">🔴 מכירה</button></div>
+      <div class="form-group"><label class="form-label">סימול מניה</label><input class="form-input" placeholder="AAPL" value="AAPL"></div>
+      <div class="form-row" style="margin-bottom:16px"><div class="form-group" style="margin:0"><label class="form-label">כמות</label><input class="form-input" placeholder="100" value="100"></div><div class="form-group" style="margin:0"><label class="form-label">מחיר ליחידה</label><input class="form-input" placeholder="150.00" value="178.50"></div></div>
+      <div class="form-row" style="margin-bottom:16px"><div><label class="form-label">מטבע</label><div class="toggle-group"><button class="toggle-btn toggle-active" style="flex:1">$</button><button class="toggle-btn toggle-inactive" style="flex:1">₪</button></div></div><div><label class="form-label">תאריך</label><input class="form-input" type="date" value="2026-04-05"></div></div>
+      <div class="form-group"><label class="form-label">סקטור</label><div class="sector-chips"><button class="chip chip-active">💻 Technology</button><button class="chip chip-inactive">🏥 Healthcare</button><button class="chip chip-inactive">🏦 Finance</button><button class="chip chip-inactive">⚡ Energy</button><button class="chip chip-inactive">🛍️ Consumer</button><button class="chip chip-inactive">🏭 Industrial</button></div></div>
+      <div class="total-preview"><div class="total-label">סה״כ עסקה</div><div class="total-value">$17,850.00</div><div class="total-remaining" style="color:var(--red2)">⚠️ Insufficient cash ($12,450 available)</div></div>
+      <button class="btn-full btn-buy">בצע קנייה</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CASH MODAL ═══ -->
+<div id="cashModal" class="modal-overlay" onclick="if(event.target===this)toggleModal('cashModal')">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header"><h3>💵 Cash Management</h3><button class="modal-close" onclick="toggleModal('cashModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="cash-balance"><div class="cash-bal-label">Current Balance</div><div class="cash-bal-value">$12,450.00</div></div>
+      <div class="toggle-group" style="margin-bottom:16px"><button class="toggle-btn" style="flex:1;background:var(--green-bg);color:var(--green2)">🟢 Deposit</button><button class="toggle-btn toggle-inactive" style="flex:1">🟠 Withdraw</button></div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:16px"><div><label class="form-label">Amount</label><input class="form-input" placeholder="10,000"></div><div><label class="form-label">Currency</label><div class="toggle-group"><button class="toggle-btn toggle-active" style="flex:1;padding:8px">$</button><button class="toggle-btn toggle-inactive" style="flex:1;padding:8px">₪</button></div></div></div>
+      <button class="btn-full btn-blue" style="margin-bottom:16px">Deposit</button>
+      <div class="cash-activity">
+        <div class="cash-activity-title">Recent activity</div>
+        <div class="cash-row"><span class="cash-row-date">2026-04-01</span><span class="tag tag-deposit">הפקדה</span><span class="cash-row-amount">$20,000</span></div>
+        <div class="cash-row"><span class="cash-row-date">2026-04-03</span><span class="tag tag-sell">קנייה</span><span class="cash-row-amount">$4,900</span><span class="cash-row-ticker">TSLA</span></div>
+        <div class="cash-row"><span class="cash-row-date">2026-04-02</span><span class="tag tag-month">מכירה</span><span class="cash-row-amount">$1,650</span><span class="cash-row-ticker">JNJ</span></div>
+        <div class="cash-row"><span class="cash-row-date">2026-03-15</span><span class="tag tag-deposit">הפקדה</span><span class="cash-row-amount">$15,000</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">NivFolio v2.0 • מחירים בהשהיה של 15 דקות • FinnHub API</div>
+
+<script>
+// Tab navigation
+document.getElementById('tabsContainer').addEventListener('click', (e) => {
+  const tab = e.target.closest('.nav-tab');
+  if (!tab) return;
+  document.querySelectorAll('.main').forEach(p => p.style.display = 'none');
+  document.getElementById('page-' + tab.dataset.page).style.display = 'block';
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+});
+
+// Modal toggle
+function toggleModal(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? '' : 'light';
+  if (next) {
+    html.setAttribute('data-theme', 'light');
+  } else {
+    html.removeAttribute('data-theme');
+  }
+  try { localStorage.setItem('nivfolio-theme', next || 'dark'); } catch(e) {}
+}
+
+// Load saved theme
+try {
+  const saved = localStorage.getItem('nivfolio-theme');
+  if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+} catch(e) {}
+</script>
+</body>
+</html>

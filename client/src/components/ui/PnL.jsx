@@ -13,10 +13,10 @@ export default function PnL({ value, percent, showSign = true }) {
   const displayPct = percent != null ? `${arrow}${sign}${percent.toFixed(2)}%` : '';
 
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontFamily: 'var(--mono)', fontSize: '12px', color }}>
-      {displayValue && <span>{displayValue}</span>}
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+      {displayValue && <span style={{ fontFamily: 'var(--mono)', fontSize: 12, color, fontWeight: 700 }}>{displayValue}</span>}
       {displayPct && (
-        <span style={{ background: bg, padding: '1px 6px', borderRadius: '99px', fontSize: '11px', fontWeight: 700 }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 700, fontFamily: 'var(--mono)', marginTop: value != null ? 4 : 0, background: bg, color }}>
           {displayPct}
         </span>
       )}
