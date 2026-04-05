@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { api } from '../api';
 
@@ -8,6 +8,28 @@ export default function CashModal({ onClose, onSaved }) {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const modalRef = useRef(null);
+  const firstFocusRef = useRef(null);
+
+  // #6 Focus trap + Escape key + auto-focus
+  useEffect(() => {
+    const el = firstFocusRef.current;
+    if (el) el.focus();
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll('button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,10 +39,8 @@ export default function CashModal({ onClose, onSaved }) {
       await api('/api/portfolio/cash', {
         method: 'POST',
         body: {
-          type: form.type,
-          amount: parseFloat(form.amount),
-          currency: form.currency,
-          note: form.note || undefined,
+          type: form.type, amount: parseFloat(form.amount),
+          currency: form.currency, note: form.note || undefined,
         },
       });
       onSaved();
@@ -32,60 +52,75 @@ export default function CashModal({ onClose, onSaved }) {
     }
   };
 
+  const modalTitleId = 'modal-title-cash';
+
   return (
-    <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-lg border border-[rgba(55,53,47,0.09)] w-full max-w-sm mx-4"
+    <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50" onClick={onClose}
+      role="dialog" aria-modal="true" aria-labelledby={modalTitleId}>
+      <div ref={modalRef}
+        className="bg-white rounded-lg border border-[rgba(55,53,47,0.09)] w-full sm:w-[400px] max-w-[calc(100vw-2rem)] mx-4"
         style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.12)' }}
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-[rgba(55,53,47,0.06)]">
-          <h3 className="text-[15px] font-semibold text-[#37352f]">
+          <h3 id={modalTitleId} className="text-base font-semibold text-[#37352f]">
             {form.type === 'deposit' ? '💰 Deposit Cash' : '💸 Withdraw Cash'}
           </h3>
-          <button onClick={onClose} className="p-1 hover:bg-[#f7f6f3] rounded"><X size={16} /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog"
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[#f7f6f3] rounded transition-colors duration-150 cursor-pointer">
+            <X size={18} aria-hidden="true" />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 space-y-3">
+        <form onSubmit={handleSubmit} className="p-4 space-y-3" aria-busy={submitting}>
           {/* Type Toggle */}
-          <div className="flex gap-1 bg-[#f7f6f3] rounded p-1">
-            {['deposit', 'withdraw'].map((t) => (
-              <button key={t} type="button"
-                onClick={() => setForm({ ...form, type: t })}
-                className={`flex-1 py-1.5 text-[13px] rounded transition-colors ${
-                  form.type === t ? 'bg-white text-[#37352f] font-medium shadow-sm' : 'text-[#91918e]'
-                }`}>
-                {t === 'deposit' ? '💰 Deposit' : '💸 Withdraw'}
-              </button>
-            ))}
-          </div>
+          <fieldset>
+            <legend className="sr-only">Operation type</legend>
+            <div className="flex gap-1 bg-[#f7f6f3] rounded p-1">
+              {['deposit', 'withdraw'].map((t) => (
+                <button key={t} type="button" ref={t === 'deposit' ? firstFocusRef : undefined}
+                  onClick={() => setForm({ ...form, type: t })}
+                  aria-pressed={form.type === t}
+                  className={`flex-1 py-2 text-sm rounded transition-colors duration-150 cursor-pointer min-h-[44px] ${
+                    form.type === t ? 'bg-white text-[#37352f] font-medium shadow-sm' : 'text-[#91918e] hover:bg-white/50'
+                  }`}>
+                  {t === 'deposit' ? '💰 Deposit' : '💸 Withdraw'}
+                </button>
+              ))}
+            </div>
+          </fieldset>
 
           {/* Amount */}
           <div>
-            <label className="text-[11px] text-[#91918e] uppercase tracking-wider">Amount (USD)</label>
-            <input type="number" step="0.01" min="0.01" required
+            <label htmlFor="cash-amount" className="text-xs text-[#91918e] uppercase tracking-wider block">Amount (USD)</label>
+            <input id="cash-amount" type="number" step="0.01" min="0.01" required
               value={form.amount}
               onChange={(e) => setForm({ ...form, amount: e.target.value })}
               placeholder="1000.00"
-              className="w-full mt-1 px-3 py-2 text-[13px] border border-[rgba(55,53,47,0.09)] rounded outline-none focus:border-[#2383e2] font-mono"
+              aria-invalid={error ? 'true' : undefined}
+              className="w-full mt-1 px-3 py-2 text-sm border border-[rgba(55,53,47,0.09)] rounded outline-none focus:border-[#2383e2] font-mono min-h-[44px]"
             />
           </div>
 
           {/* Note */}
           <div>
-            <label className="text-[11px] text-[#91918e] uppercase tracking-wider">Note (optional)</label>
-            <input type="text"
+            <label htmlFor="cash-note" className="text-xs text-[#91918e] uppercase tracking-wider block">Note (optional)</label>
+            <input id="cash-note" type="text"
               value={form.note}
               onChange={(e) => setForm({ ...form, note: e.target.value })}
               placeholder="Initial deposit"
-              className="w-full mt-1 px-3 py-2 text-[13px] border border-[rgba(55,53,47,0.09)] rounded outline-none focus:border-[#2383e2]"
+              className="w-full mt-1 px-3 py-2 text-sm border border-[rgba(55,53,47,0.09)] rounded outline-none focus:border-[#2383e2] min-h-[44px]"
             />
           </div>
 
           {error && (
-            <div className="bg-[#ffe2dd] text-[#93000a] px-3 py-2 rounded text-[13px]">{error}</div>
+            <div id="cash-error" className="bg-[#ffe2dd] text-[#93000a] px-3 py-2 rounded text-sm" role="alert">
+              {error}
+            </div>
           )}
 
           <button type="submit" disabled={submitting}
-            className="w-full py-2 text-[13px] text-white bg-[#2383e2] hover:bg-[#1a6bc4] rounded transition-colors disabled:opacity-50 font-medium">
+            aria-describedby={error ? 'cash-error' : undefined}
+            className="w-full py-3 min-h-[44px] text-sm text-white bg-[#2383e2] hover:bg-[#1a6bc4] rounded transition-colors duration-150 disabled:opacity-50 font-medium cursor-pointer">
             {submitting ? 'Processing...' : form.type === 'deposit' ? 'Deposit' : 'Withdraw'}
           </button>
         </form>
