@@ -135,6 +135,69 @@ router.get('/profile/:ticker', async (req, res) => {
   }
 });
 
+// GET /api/prices/lookup/:ticker — combined quote + profile for smart ticker card
+router.get('/lookup/:ticker', async (req, res) => {
+  const ticker = req.params.ticker.toUpperCase();
+  try {
+    const cachedProfile = await pool.query(
+      `SELECT * FROM company_profiles WHERE ticker = $1 AND updated_at > NOW() - INTERVAL '24 hours'`, [ticker]
+    );
+    const cachedPrice = await pool.query(
+      `SELECT * FROM price_cache WHERE ticker = $1 AND updated_at > NOW() - INTERVAL '5 minutes'`, [ticker]
+    );
+
+    let profile = cachedProfile.rows[0] || null;
+    let quote = cachedPrice.rows[0] || null;
+
+    if (!profile) {
+      const p = await getProfile(ticker);
+      if (p) {
+        await pool.query(
+          `INSERT INTO company_profiles (ticker, name, sector, industry, logo_url, market_cap, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6, NOW())
+           ON CONFLICT (ticker) DO UPDATE SET name=$2, sector=$3, industry=$4, logo_url=$5, market_cap=$6, updated_at=NOW()`,
+          [ticker, p.name, p.sector, p.industry, p.logo_url, p.market_cap]
+        );
+        profile = p;
+      }
+    }
+
+    if (!quote) {
+      if (!cachedProfile.rows[0]) await delay(200);
+      const q = await getQuote(ticker);
+      if (q) {
+        await pool.query(
+          `INSERT INTO price_cache (ticker, current_price, day_change, day_change_pct, high, low, open_price, prev_close, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+           ON CONFLICT (ticker) DO UPDATE SET
+             current_price=$2, day_change=$3, day_change_pct=$4, high=$5, low=$6, open_price=$7, prev_close=$8, updated_at=NOW()`,
+          [ticker, q.current_price, q.day_change, q.day_change_pct, q.high, q.low, q.open_price, q.prev_close]
+        );
+        quote = q;
+      }
+    }
+
+    if (!profile && !quote) return res.status(404).json({ error: 'Ticker not found' });
+
+    res.json({
+      ticker,
+      name: profile?.name || ticker,
+      sector: profile?.sector || 'Other',
+      logo: profile?.logo_url || null,
+      marketCap: profile?.market_cap || null,
+      price: quote?.current_price ? parseFloat(quote.current_price) : null,
+      change: quote?.day_change ? parseFloat(quote.day_change) : null,
+      changePct: quote?.day_change_pct ? parseFloat(quote.day_change_pct) : null,
+      high: quote?.high ? parseFloat(quote.high) : null,
+      low: quote?.low ? parseFloat(quote.low) : null,
+      prevClose: quote?.prev_close ? parseFloat(quote.prev_close) : null,
+    });
+  } catch (err) {
+    console.error('Lookup error:', err);
+    res.status(500).json({ error: 'Failed to fetch ticker data' });
+  }
+});
+
 // GET /api/prices/search?q=
 router.get('/search', async (req, res) => {
   const q = req.query.q;

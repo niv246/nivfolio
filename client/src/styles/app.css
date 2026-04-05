@@ -68,6 +68,10 @@ button,[role="button"],a{cursor:pointer}
 .del-btn{opacity:0;transition:opacity 0.2s}
 tr:hover .del-btn{opacity:1}
 
+/* Skeleton pulse animation */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.skeleton-pulse{animation:pulse 1.5s infinite}
+
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--text3);border-radius:3px}
