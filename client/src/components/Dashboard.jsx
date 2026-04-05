@@ -83,17 +83,17 @@ export default function Dashboard() {
         <h1 className="text-2xl sm:text-3xl font-bold text-[#37352f]">📊 Portfolio</h1>
         <div className="flex items-center gap-2">
           <button type="button" onClick={handleRefresh} disabled={refreshing}
-            className="flex items-center gap-1.5 px-4 py-2 min-h-[44px] text-sm text-[#91918e] hover:bg-[#f7f6f3] rounded transition-colors duration-150 disabled:opacity-50 cursor-pointer">
+            className="flex items-center gap-2 px-4 py-2.5 min-h-[44px] text-sm text-[#37352f] bg-[#f7f6f3] hover:bg-[#eeedea] border border-[rgba(55,53,47,0.09)] rounded-lg transition-colors duration-150 disabled:opacity-50 cursor-pointer">
             <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} aria-hidden="true" />
             <span className="hidden sm:inline">Refresh</span>
           </button>
           <button type="button" ref={cashButtonRef} onClick={() => setShowCashModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 min-h-[44px] text-sm text-[#2383e2] hover:bg-[#d3e5ef] rounded transition-colors duration-150 cursor-pointer">
+            className="flex items-center gap-2 px-4 py-2.5 min-h-[44px] text-sm text-[#2383e2] bg-[#d3e5ef] hover:bg-[#b8d4e8] border border-[#2383e2]/20 rounded-lg transition-colors duration-150 cursor-pointer">
             <DollarSign size={16} aria-hidden="true" />
             <span className="hidden sm:inline">Cash</span>
           </button>
           <button type="button" ref={tradeButtonRef} onClick={() => setShowTxModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 min-h-[44px] text-sm text-white bg-[#2383e2] hover:bg-[#1a6bc4] rounded transition-colors duration-150 cursor-pointer">
+            className="flex items-center gap-2 px-5 py-2.5 min-h-[44px] text-sm font-medium text-white bg-[#2383e2] hover:bg-[#1a6bc4] rounded-lg shadow-sm transition-colors duration-150 cursor-pointer">
             <Plus size={16} aria-hidden="true" />
             <span className="hidden sm:inline">Trade</span>
           </button>

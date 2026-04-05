@@ -24,7 +24,7 @@ export default function Layout({ children }) {
       <header>
         <nav aria-label="Main navigation"
           className="sticky top-0 z-50 bg-white border-b border-[rgba(55,53,47,0.09)] px-4 sm:px-6 min-h-[48px] flex items-center gap-1">
-          <span className="text-[15px] font-bold mr-4 text-[#37352f]">NivFolio</span>
+          <span className="text-base font-bold mr-6 text-[#37352f]">NivFolio</span>
 
           {/* Mobile hamburger */}
           <button type="button" onClick={() => setMenuOpen(!menuOpen)}
@@ -35,17 +35,17 @@ export default function Layout({ children }) {
           </button>
 
           {/* Desktop nav */}
-          <div className="hidden sm:flex items-center gap-1">
+          <div className="hidden sm:flex items-center gap-1.5">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.to === '/'}
                 className={({ isActive }) =>
-                  `px-3 py-2 rounded text-sm transition-colors duration-150 hover:bg-[#f7f6f3] min-h-[44px] flex items-center ${
+                  `px-4 py-2 rounded-lg text-sm transition-colors duration-150 min-h-[44px] flex items-center ${
                     isActive
-                      ? 'bg-[#f1f1ef] text-[#37352f] font-medium'
-                      : 'text-[#91918e]'
+                      ? 'bg-[#2383e2]/10 text-[#2383e2] font-semibold'
+                      : 'text-[#91918e] hover:bg-[#f7f6f3] hover:text-[#37352f]'
                   }`
                 }
                 aria-current={({ isActive }) => isActive ? 'page' : undefined}
