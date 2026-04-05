@@ -1,60 +1,148 @@
 @import "tailwindcss";
 
+/* ===== DARK THEME (default) ===== */
 :root {
-  --bg: #ffffff;
-  --bg-secondary: #f7f6f3;
-  --bg-hover: #f7f6f3;
-  --bg-tag: #f1f1ef;
-  --text: #37352f;
-  --text-secondary: #91918e;
-  --text-muted: #c3c2c0;
-  --text-link: #2383e2;
-  --border: rgba(55, 53, 47, 0.09);
-  --border-light: rgba(55, 53, 47, 0.06);
-  --green: #2d8a5e;
-  --green-bg: #dbeddb;
-  --green-text: #2d6a4f;
-  --red: #c4554d;
-  --red-bg: #ffe2dd;
-  --red-text: #93000a;
-  --blue: #2383e2;
-  --blue-bg: #d3e5ef;
-  --yellow-bg: #fdecc8;
-  --purple-bg: #e8deee;
-  --orange-bg: #fadec9;
-  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --font-mono: 'SFMono-Regular', Menlo, Consolas, monospace;
-  --shadow-modal: 0 8px 40px rgba(0, 0, 0, 0.12);
+  --bg: #0a0e1a;
+  --bg2: #111827;
+  --bg3: #1e293b;
+  --bg4: #0f172a;
+  --hover: rgba(255,255,255,0.03);
+
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #475569;
+
+  --border: rgba(255,255,255,0.05);
+  --border2: rgba(255,255,255,0.03);
+
+  --indigo: #6366f1;
+  --indigo2: #818cf8;
+  --indigo-bg: rgba(99,102,241,0.15);
+  --cyan: #06b6d4;
+
+  --green: #10b981;
+  --green2: #34d399;
+  --green-bg: rgba(16,185,129,0.15);
+  --red: #ef4444;
+  --red2: #f87171;
+  --red-bg: rgba(239,68,68,0.15);
+  --amber: #f59e0b;
+  --amber2: #fbbf24;
+  --amber-bg: rgba(245,158,11,0.06);
+  --amber-border: rgba(245,158,11,0.2);
+
+  --purple: #8b5cf6;
+  --orange: #f97316;
+
+  --card-shadow: none;
+  --modal-bg: rgba(0,0,0,0.6);
+  --modal-border: rgba(255,255,255,0.1);
+  --input-bg: #0a0e1a;
+  --chip-bg: rgba(255,255,255,0.05);
+  --tag-bg: rgba(255,255,255,0.05);
+  --ticker-bg: rgba(99,102,241,0.1);
+  --ticker-color: var(--indigo2);
+  --weight-track: rgba(255,255,255,0.05);
+  --nav-blur: rgba(10,14,26,0.92);
+
+  --gradient-indigo: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(99,102,241,0.04));
+  --gradient-green: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(16,185,129,0.04));
+  --gradient-red: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(239,68,68,0.04));
+  --gradient-gray: linear-gradient(135deg, rgba(100,116,139,0.14), rgba(100,116,139,0.04));
+
+  --chart-fill: rgba(99,102,241,0.15);
+
+  --toggle-track: #1e293b;
+  --toggle-knob: #818cf8;
+
+  --sans: 'DM Sans', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
 }
 
-* {
+/* ===== LIGHT THEME ===== */
+[data-theme="light"] {
+  --bg: #f8f9fb;
+  --bg2: #ffffff;
+  --bg3: #f1f3f5;
+  --bg4: #e9ecef;
+  --hover: rgba(0,0,0,0.03);
+
+  --text: #1a1a2e;
+  --text2: #6b7280;
+  --text3: #9ca3af;
+
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.04);
+
+  --indigo: #4f46e5;
+  --indigo2: #6366f1;
+  --indigo-bg: rgba(79,70,229,0.08);
+
+  --green: #059669;
+  --green2: #10b981;
+  --green-bg: rgba(5,150,105,0.08);
+  --red: #dc2626;
+  --red2: #ef4444;
+  --red-bg: rgba(220,38,38,0.08);
+
+  --amber: #d97706;
+  --amber2: #f59e0b;
+  --amber-bg: rgba(217,119,6,0.05);
+  --amber-border: rgba(217,119,6,0.15);
+
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --modal-bg: rgba(0,0,0,0.3);
+  --modal-border: rgba(0,0,0,0.1);
+  --input-bg: #f1f3f5;
+  --chip-bg: rgba(0,0,0,0.04);
+  --tag-bg: rgba(0,0,0,0.05);
+  --ticker-bg: rgba(79,70,229,0.08);
+  --ticker-color: var(--indigo);
+  --weight-track: rgba(0,0,0,0.06);
+  --nav-blur: rgba(248,249,251,0.92);
+
+  --gradient-indigo: linear-gradient(135deg, rgba(79,70,229,0.06), rgba(79,70,229,0.01));
+  --gradient-green: linear-gradient(135deg, rgba(5,150,105,0.06), rgba(5,150,105,0.01));
+  --gradient-red: linear-gradient(135deg, rgba(220,38,38,0.06), rgba(220,38,38,0.01));
+  --gradient-gray: linear-gradient(135deg, rgba(107,114,128,0.06), rgba(107,114,128,0.01));
+
+  --chart-fill: rgba(79,70,229,0.08);
+
+  --toggle-track: #e2e8f0;
+  --toggle-knob: #f59e0b;
+}
+
+/* ===== Global ===== */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 body {
-  font-family: var(--font);
+  font-family: var(--sans);
   color: var(--text);
   background: var(--bg);
-  font-size: 16px;
+  font-size: 13px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.3s ease;
 }
 
-/* #7 Focus Styles */
+/* Focus */
 *:focus-visible {
-  outline: 2px solid #2383e2;
+  outline: 2px solid var(--indigo);
   outline-offset: 2px;
   border-radius: 2px;
 }
 
-/* Global button cursor */
-button, [role="button"], a {
-  cursor: pointer;
-}
+button, [role="button"], a { cursor: pointer; }
+
+/* Delete button hover reveal */
+.del-btn { opacity: 0; transition: opacity 0.2s; }
+tr:hover .del-btn { opacity: 1; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--text3); border-radius: 3px; }
